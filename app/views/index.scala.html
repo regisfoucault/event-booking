@@ -1,0 +1,20 @@
+@()
+
+@import helper._
+
+@main("Booking application") {
+
+  <div class="container">
+    <div class="row-fluid">
+      <article>
+        Bienvenue
+
+        <a href="/login">Login</a>
+      </article>
+    </div>
+  </div>
+
+  <script type="text/javascript" src='@routes.Application.javascriptRoutes()'></script>
+  <script type="text/javascript" src="@routes.Assets.at("javascripts/main.js")"></script>
+    
+}

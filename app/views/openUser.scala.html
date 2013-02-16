@@ -1,0 +1,89 @@
+@(user: Option[User], events: List[Event], userevents: List[UserEvent], users: List[User])
+
+@import helper._
+
+@main("Booking") {
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="brand" href="/">Booking</a>
+        <div class="nav-collapse collapse">
+          <ul class="nav pull-right">
+            <li class="">
+              <a href="/logout">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <article>
+        
+          @user.map{ user2 =>
+            <h1>Evénements<small><a href="/users/@user2.id/events/add">Ajouter</a></small></h1>
+            Bonjour @user2.prename
+          }.getOrElse{
+            <h1>Evénements</h1>
+            <a href="/login">Login</a>
+          }
+        
+        <div>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Nom</th>
+                <th>Places</th>
+                <th>Places restantes</th>
+                <th>Inscrits</th>
+                <th>Description</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @events.map{event =>
+                <tr>
+                  <td>@event.date</td>
+                  <td>@event.name</td>
+                  <td>@event.nbrePlaces</td>
+                  <td>
+                    @{event.nbrePlaces.toInt - userevents.filter{ e => 
+                      e.eventId == event.id
+                    }.length}
+                  </td>
+                  <td>
+                    @{userevents.filter{ e =>
+                      e.eventId == event.id
+                    }.map { userEvent =>
+                      users.filter { user =>
+                        userEvent.userId == user.id
+                      }.map { user =>
+                        user.prename ++ " " ++ user.lastname ++ " " ++ user.email ++ " " ++ user.phone
+                      }
+                    }}
+                  </td>
+                  <td>event.des
+                  </td>
+                  <td>Edit</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      
+      </article>
+    </div>
+  </div>
+
+  <script type="text/javascript" src='@routes.Application.javascriptRoutes()'></script>
+  <script type="text/javascript" src="@routes.Assets.at("javascripts/main.js")"></script>
+    
+}

@@ -1,0 +1,57 @@
+@(uid: String, myForm: Form[EventData])
+
+@import helper._
+
+@main("Ajouter un événement") {
+
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="brand" href="/">Booking</a>
+        <div class="nav-collapse collapse">
+          <ul class="nav pull-right">
+            <li class="">
+              <a href="/logout">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <article>
+      <h1>Nouvel événement</h1>
+      <div class="row-fluid">
+        @helper.form(action = routes.Events.saveNew(uid), 'class -> "form-horizontal", 'enctype -> "multipart/form-data") {
+            <fieldset>
+              <div class="span12">
+                @inputText(myForm("name"), '_label -> "Nom")
+                @inputDate(myForm("date"), '_label -> "Date")
+                @inputText(myForm("nbrePlaces"), '_label -> "Nombre de places")
+              </div>
+              @myForm.globalError.map { error =>
+                <p class="error">
+                    @error.message
+                </p>
+              }
+              
+            </fieldset>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Créer</button>
+              <a type="button" class="btn" href="/users/@uid">Annuler</a>
+            </div>
+          }
+      </div>
+    </article>
+  </div>
+
+  <script type="text/javascript" src='@routes.Application.javascriptRoutes()'></script>
+  <script type="text/javascript" src="@routes.Assets.at("javascripts/main.js")"></script>
+    
+}

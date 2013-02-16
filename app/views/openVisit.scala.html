@@ -1,0 +1,95 @@
+@(creator: User, visitor: Option[User], events: List[Event], inscrits: List[UserEvent])
+
+@import helper._
+
+@main("Booking") {
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <a class="btn btn-navbar collapsed" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </a>
+        <a class="brand" href="/">Booking</a>
+        <div class="nav-collapse navbar-responsive-collapse collapse" style="height: 0px;">
+          @visitor.map{ user2 =>
+            <ul class="nav pull-right">
+              <li id="fat-menu" class="dropdown">
+                      <a href="#" id="drop3" role="button" class="dropdown-toggle" data-toggle="dropdown">@user2.prename @user2.lastname<b class="caret"></b></a>
+                      <ul class="dropdown-menu" role="menu" aria-labelledby="drop3">
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="">Paramètres</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="/logout">Logout</a></li>
+                      </ul>
+                    </li>
+            </ul>
+
+          }
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <article>
+          <h1>Evénements de @creator.prename @creator.lastname</h1>
+          @visitor.map{ user2 =>
+            Bonjour @user2.prename
+          }.getOrElse{
+            <a href="/login">Login</a>
+          }
+        <div>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Nom</th>
+                <th>Nombre de places</th>
+                <th>Nombre de places restantes</th>
+                <th>Description</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @events.map{event =>
+                <tr>
+                  <td>@event.date</td>
+                  <td>@event.name</td>
+                  <td>@event.nbrePlaces</td>
+                  <td>
+                    @{event.nbrePlaces.toInt - inscrits.filter{ e => 
+                      e.eventId == event.id
+                    }.length}
+                  </td>
+                  <td>event.des
+                  </td>
+                  <td>
+                    @{
+                      visitor.map { visitor =>
+                        if (visitor != None && inscrits.filter{ e =>
+                          e.eventId == event.id && e.userId == visitor.id}.length > 0) {
+                          "Inscrit"
+                        } else {
+                          <a href="" class="bookEvent" name="@event.id">Inscription</a>
+                        }
+                      }.getOrElse(
+                        <a href="" class="bookEvent" name="@event.id">Inscription</a>
+                      )
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      
+      </article>
+    </div>
+  </div>
+
+  <script type="text/javascript" src='@routes.Application.javascriptRoutes()'></script>
+  <script type="text/javascript" src="@routes.Assets.at("javascripts/main.js")"></script>
+    
+}

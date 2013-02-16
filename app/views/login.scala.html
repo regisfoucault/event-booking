@@ -1,0 +1,64 @@
+@(signUpForm: Form[UserData], signInForm: Form[SignInData])
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+@main("Login") {
+
+  <div class="container">
+    <div class="row">
+      <article>
+        <div class="row-fluid">
+          <h1>Déjà inscrit :</h1>
+          @helper.form(action = routes.Users.signIn(), 'class -> "form-horizontal", 'enctype -> "multipart/form-data") {
+            <fieldset>
+              <div class="span12">
+                <div style="display:none">
+                  @inputText(signInForm("eid"), '_label -> "")
+                </div>
+                @inputText(signInForm("email"), '_label -> "Email")
+                @inputPassword(signInForm("password"), '_label -> "Mot de passe")
+              </div>
+              @signInForm.globalError.map { error =>
+                <p class="error">
+                    @error.message
+                </p>
+              }
+              
+            </fieldset>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Login</button>
+              <a type="button" class="btn" href="/">Annuler</a>
+            </div>
+          }
+        </div>
+
+        <div class="row-fluid">
+          <h1>Pas encore inscrit :</h1>
+          @form(action = routes.Users.signUp(), 'class -> "form-horizontal", 'enctype -> "multipart/form-data") {
+            <fieldset>
+              <div class="span12">
+                @inputText(signUpForm("prename"), '_label -> "Prénom")
+                @inputText(signUpForm("lastname"), '_label -> "Nom")
+                @inputText(signUpForm("email"), '_label -> "Email")
+                @inputText(signUpForm("phone"), '_label -> "Numéro de téléhphone")
+                @inputPassword(signUpForm("password"), '_label -> "Mot de passe")
+              </div>
+              
+            </fieldset>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Enregistrer</button>
+              <a type="button" class="btn" href="/">Annuler</a>
+            </div>
+          }
+        </div>       
+      
+      </article>
+    </div>
+  </div>
+
+  <script type="text/javascript" src='@routes.Application.javascriptRoutes()'></script>
+  <script type="text/javascript" src="@routes.Assets.at("javascripts/main.js")"></script>
+    
+}

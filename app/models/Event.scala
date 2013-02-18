@@ -9,7 +9,8 @@ case class Event(
   creatorId: String,
   name: String,
   date: String,
-  nbrePlaces: String
+  nbrePlaces: String,
+  description: String
 ) 
 
 trait EventComponent {
@@ -25,7 +26,8 @@ trait EventComponent {
     def name = column[String]("name")
     def date = column[String]("date")
     def nbrePlaces = column[String]("nbrePlaces")
-    def * = id ~ creationDate ~ updateDate ~ creatorId ~ name ~ date ~ nbrePlaces <> (Event, Event.unapply _)
+    def description = column[String]("description")
+    def * = id ~ creationDate ~ updateDate ~ creatorId ~ name ~ date ~ nbrePlaces ~ description <> (Event, Event.unapply _)
 
     def add(event: Event)(implicit session: Session) = {
       this.insert(event)

@@ -13,7 +13,8 @@ import views._
 case class EventData(
   name: String,
   date: String,
-  nbrePlaces: String
+  nbrePlaces: String,
+  description: String
 )
 
 object Events extends Controller with Secured {
@@ -37,24 +38,17 @@ object Events extends Controller with Secured {
           creatorId = uid,
           name = newEvent.name,
           date = newEvent.date,
-          nbrePlaces = newEvent.nbrePlaces
+          nbrePlaces = newEvent.nbrePlaces,
+          description = newEvent.description
         )
         AppDB.dal.Events.add(eventToSave)
-
-        /*val userEventToSave = UserEvent(
-          userId = uid,
-          eventId = eventToSave.id
-        )
-        AppDB.dal.UserEvents.add(userEventToSave)*/
         Redirect(routes.Users.open(uid))
       }
     )
   )
 
   def book(eid: String) = Action { implicit request => 
-    //request.session.get("username")
     request.session.get("username") map { username =>
-      //TODO
       AppDB.dal.Users.getByUsername(username) map { user =>
         val userEventToSave = UserEvent(
           userId = user.id,
@@ -70,7 +64,8 @@ object Events extends Controller with Secured {
     mapping(
       "name" -> text,
       "date" -> text,
-      "nbrePlaces" -> text
+      "nbrePlaces" -> text,
+      "description" -> text
     )(EventData.apply)(EventData.unapply)
   )
 }

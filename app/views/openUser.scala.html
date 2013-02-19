@@ -1,4 +1,4 @@
-@(user: Option[User], events: List[Event], userevents: List[UserEvent], users: List[User])
+@(creator: User, visitor: Option[User], events: List[Event], userevents: List[UserEvent], users: List[User])
 
 @import helper._
 
@@ -6,18 +6,26 @@
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
       <div class="container">
-        <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <a class="btn btn-navbar collapsed" data-toggle="collapse" data-target=".navbar-responsive-collapse">
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
-        </button>
+        </a>
         <a class="brand" href="/">Booking</a>
-        <div class="nav-collapse collapse">
-          <ul class="nav pull-right">
-            <li class="">
-              <a href="/logout">Logout</a>
-            </li>
-          </ul>
+        <div class="nav-collapse navbar-responsive-collapse collapse" style="height: 0px;">
+          @visitor.map{ user2 =>
+            <ul class="nav pull-right">
+              <li id="fat-menu" class="dropdown">
+                      <a href="#" id="drop3" role="button" class="dropdown-toggle" data-toggle="dropdown">@user2.prename @user2.lastname<b class="caret"></b></a>
+                      <ul class="dropdown-menu" role="menu" aria-labelledby="drop3">
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="">Paramètres</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="/logout">Logout</a></li>
+                      </ul>
+                    </li>
+            </ul>
+
+          }
+
         </div>
       </div>
     </div>
@@ -27,11 +35,14 @@
     <div class="row">
       <article>
         
-          @user.map{ user2 =>
-            <h1>Evénements<small><a href="/users/@user2.id/events/add">Ajouter</a></small></h1>
-            Bonjour @user2.prename
+          @visitor.map{ visitor2 =>
+            @if(visitor2.id==creator.id) {
+              <h3>Vos événements créés<small><a href="/users/@creator.id/events/add">Ajouter</a></small></h3>
+            } else {
+            <h3>Evénements de @creator.prename @creator.lastname</h3>
+            }
           }.getOrElse{
-            <h1>Evénements</h1>
+            <h3>Evénements</h3>
             <a href="/login">Login</a>
           }
         
@@ -43,8 +54,14 @@
                 <th>Nom</th>
                 <th>Places</th>
                 <th>Places restantes</th>
-                <th>Inscrits</th>
                 <th>Description</th>
+                @{visitor.map{visitor =>
+                  if(creator.id==visitor.id){
+                  <th>Inscrits</th>
+                  } else {
+                    <th>Status</th>
+                  }
+                }.getOrElse(<th>Status</th>)}
                 <th></th>
               </tr>
             </thead>
@@ -59,20 +76,35 @@
                       e.eventId == event.id
                     }.length}
                   </td>
-                  <td>
-                    @{userevents.filter{ e =>
-                      e.eventId == event.id
-                    }.map { userEvent =>
-                      users.filter { user =>
-                        userEvent.userId == user.id
-                      }.map { user =>
-                        user.prename ++ " " ++ user.lastname ++ " " ++ user.email ++ " " ++ user.phone
+                  <td>@event.description</td>
+                  @{visitor.map{visitor =>
+                    if(creator.id==visitor.id){
+                      <td>
+                        @{userevents.filter{ e =>
+                          e.eventId == event.id
+                        }.map { userEvent =>
+                          users.filter { user =>
+                            userEvent.userId == user.id
+                          }.map { user =>
+                            user.prename ++ " " ++ user.lastname ++ " " ++ user.email ++ " " ++ user.phone
+                          }
+                        }}
+                      </td>
+                      <td>Edit</td>
+                    } else {
+                      if(userevents.filter { e =>
+                        e.eventId == event.id && e.userId == visitor.id}.length > 0) {
+                            <td><span class="label label-success">Inscrit</span></td>
+                            <td><button class="btn">Se désinscrire</button></td>
+                          } else {
+                            <td><span class="label label-success">Non inscrit</span></td>
+                            <td><a href="" class="bookEvent" name={event.id}>Inscription</a></td>
+                          }
                       }
-                    }}
-                  </td>
-                  <td>@event.description
-                  </td>
-                  <td>Edit</td>
+                  }.getOrElse(
+                    <td><span class="label label-success">non inscrit</span></td>
+                    <td><a href="" class="bookEvent" name={event.id}>Inscription</a></td>
+                  )}
                 </tr>
               }
             </tbody>

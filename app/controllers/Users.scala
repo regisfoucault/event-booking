@@ -30,25 +30,28 @@ object Users extends Controller with Secured {
     implicit session: Session => session
   }
 
-  /*def main = IsAuthenticated { username => _ =>
-    Ok(views.html.app(AppDB.dal.Users.getByUsername(username)))
-  }*/
-
-  def index() = Action(
-    Ok(views.html.index())
+  def index() = Action( request =>
+    request.session.get("username") map { username =>
+      (for {
+        user <- AppDB.dal.Users.getByUsername(username)
+      } yield {
+        Redirect(routes.Users.open(user.id))
+      }) getOrElse Ok(views.html.index())
+    } getOrElse Ok(views.html.index())
   )
 
-  def open(uid: String) = Action{ request =>//IsAuthenticated { username => _ =>
-    //request.session.get("username") map { username =>
-      (for {
-        user <- AppDB.dal.Users.get(uid)
-        events <- Some(AppDB.dal.Events.getByUser(uid)) // liste des events créés par cet admin
-        userevents <- Some(AppDB.dal.UserEvents.listInscrits(events)) // liste des userid/eventid des inscrits à ces events
-        inscrits <- Some(AppDB.dal.UserEvents.listUsers(userevents)) // récupération des user de ces couples userid/eventid
-      } yield {
-        Ok(views.html.openUser(Some(user), events, userevents, inscrits))
-      }) getOrElse BadRequest
-    //} getOrElse Ok(views.html.openUser(None, events, inscrits))
+  def open(uid: String) = Action{ request =>
+    (for {
+      creator <- AppDB.dal.Users.get(uid)
+      events <- Some(AppDB.dal.Events.getByUser(uid)) // liste des events créés par cet admin
+      userevents <- Some(AppDB.dal.UserEvents.listInscrits(events)) // liste des userid/eventid des inscrits à ces events
+      inscrits <- Some(AppDB.dal.UserEvents.listUsers(userevents)) // récupération des user de ces couples userid/eventid
+    } yield {
+      request.session.get("username") map { username =>
+        val visitor = AppDB.dal.Users.getByUsername(username)
+        Ok(views.html.openUser(creator, visitor, events, userevents, inscrits))
+      } getOrElse Ok(views.html.openUser(creator, None, events, userevents, inscrits))
+    }) getOrElse BadRequest
   }
 
   def login(eid: String) = Action {

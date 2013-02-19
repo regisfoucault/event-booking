@@ -39,18 +39,11 @@ trait UserEventComponent {
     }
 
     def listUsers(events: List[UserEvent])(implicit session: Session): List[User] = {
-      /*val temp = events flatMap { event =>
-        val q = for(u <- UserEvents if u.eventId === event.id) yield u
-        q.list()
-      }*/
       val temp = events flatMap { userEvent =>
         AppDB.dal.Users.get(userEvent.userId).map{
           user => user
         }
       }
-      println(temp)
-      //println(List(None))
-      //List()
       temp
     }
 
@@ -59,8 +52,8 @@ trait UserEventComponent {
       q.update(userEvent)
     }
 
-    def remove(eid: String)(implicit session: Session) = {
-      val q = for(u <- UserEvents if u.eventId === eid) yield u
+    def remove(uid: String, eid: String)(implicit session: Session) = {
+      val q = for(u <- UserEvents if (u.eventId === eid && u.userId === uid)) yield u
       q.delete
     }
 

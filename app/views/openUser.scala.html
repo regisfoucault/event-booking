@@ -95,7 +95,7 @@
                       if(userevents.filter { e =>
                         e.eventId == event.id && e.userId == visitor.id}.length > 0) {
                             <td><span class="label label-success">Inscrit</span></td>
-                            <td><button class="btn">Se désinscrire</button></td>
+                            <td><button class="btn btn-small unBookEvent" name={event.id}>Se désinscrire</button></td>
                           } else {
                             <td><span class="label label-success">Non inscrit</span></td>
                             <td><a href="" class="bookEvent" name={event.id}>Inscription</a></td>

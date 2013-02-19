@@ -21,6 +21,7 @@ GET     /logout                     controllers.Application.logout
 GET     /v/:uid                     controllers.Visits.open(uid)
 
 POST    /events/:eid/book           controllers.Events.book(eid)
+POST    /events/:eid/unbook         controllers.Events.unBook(eid)
 
 # Users
 #GET     /users/new                  controllers.Users.newUser

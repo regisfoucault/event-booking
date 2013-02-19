@@ -60,6 +60,13 @@ object Events extends Controller with Secured {
     } getOrElse Ok("notconnected")
   }
 
+  def unBook(eid: String) = IsAuthenticated { username => implicit request =>
+    AppDB.dal.Users.getByUsername(username) map { user =>
+      AppDB.dal.UserEvents.remove(user.id, eid)
+      Ok("desinscrit")
+    } getOrElse BadRequest
+  }
+
   def createEventForm = Form(
     mapping(
       "name" -> text,

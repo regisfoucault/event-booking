@@ -20,8 +20,7 @@ POST    /signup                     controllers.Users.signUp
 POST    /signin                     controllers.Users.signIn
 GET     /logout                     controllers.Application.logout
 
-# Visits
-GET     /v/:uid                     controllers.Visits.open(uid)
+# Events
 
 POST    /events/:eid/book           controllers.Events.book(eid)
 POST    /events/:eid/unbook         controllers.Events.unBook(eid)

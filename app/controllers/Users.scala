@@ -81,7 +81,6 @@ object Users extends Controller with Secured {
   def signIn = Action { implicit request =>
     signInForm.bindFromRequest.fold(
       formWithErrors => {
-        println(formWithErrors)
         BadRequest(views.html.login(signUpForm, formWithErrors))
       },
       user => {
@@ -104,7 +103,6 @@ object Users extends Controller with Secured {
   def signUp = Action { implicit request =>
     signUpForm.bindFromRequest.fold(
       errors => {
-        println(errors)
         BadRequest(views.html.login(errors, signInForm))
       },
       myForm => {

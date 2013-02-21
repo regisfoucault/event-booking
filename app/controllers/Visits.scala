@@ -37,8 +37,6 @@ object Visits extends Controller with Secured {
       } yield {
         request.session.get("username") map { username =>
           val visitor = AppDB.dal.Users.getByUsername(username)
-          println(events)
-          println(inscrits)
           Ok(views.html.openVisit(creator, visitor, events, inscrits))
         } getOrElse Ok(views.html.openVisit(creator, None, events, inscrits))  
       }) getOrElse BadRequest

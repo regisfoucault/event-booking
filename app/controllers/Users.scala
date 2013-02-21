@@ -86,7 +86,7 @@ object Users extends Controller with Secured {
       user => {
         AppDB.dal.Users.getByUsername(user.email) map { user2 =>
           if (user.eid != "") {
-            Redirect(routes.Visits.open(user.eid)).withSession(Security.username -> user.email)
+            Redirect(routes.Users.open(user.eid)).withSession(Security.username -> user.email)
           } else {
             Redirect(routes.Users.open(user2.id)).withSession(Security.username -> user.email)  
           }

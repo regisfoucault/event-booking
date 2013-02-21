@@ -52,6 +52,11 @@ trait EventComponent {
       val q = for(u <- Events if u.id === uid) yield u
       q.delete
     }
-  }
 
+    def listUsers(events: List[Event])(implicit session: Session) = {
+      events flatMap {event =>
+        AppDB.dal.Users.get(event.creatorId)
+      } distinct
+    }
+  }
 }

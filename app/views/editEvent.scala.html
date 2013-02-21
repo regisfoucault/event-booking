@@ -1,8 +1,8 @@
-@(creator: User, uid: String, myForm: Form[EventData])
+@(creator: User, uid: String, eid: String, myForm: Form[EventData])
 
 @import helper._
 
-@main("Ajouter un événement", Some(creator), true) {
+@main("Modifier un événement", Some(creator), true) {
 
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
@@ -30,9 +30,9 @@
 
   <div class="container">
     <article>
-      <h1>Nouvel événement</h1>
+      <h1>Modification événement</h1>
       <div class="row-fluid">
-        @helper.form(action = routes.Events.saveNew(uid), 'class -> "form-horizontal", 'enctype -> "multipart/form-data") {
+        @helper.form(action = routes.Events.update(uid, eid), 'class -> "form-horizontal", 'enctype -> "multipart/form-data") {
             <fieldset>
               <div class="row-fluid">
                 <div class="span6">
@@ -49,9 +49,10 @@
                   </p>
                 }
               </div>
+              
             </fieldset>
             <div class="form-actions">
-              <button type="submit" class="btn btn-primary">Créer</button>
+              <button type="submit" class="btn btn-primary">Actualiser</button>
               <a type="button" class="btn" href="/users/@uid">Annuler</a>
             </div>
           }

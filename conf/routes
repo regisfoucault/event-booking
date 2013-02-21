@@ -9,6 +9,9 @@ GET     /users/:uid                 controllers.Users.open(uid)
 # Event
 GET     /users/:uid/events/add      controllers.Events.add(uid)
 POST    /users/:uid/events          controllers.Events.saveNew(uid)
+GET     /users/:uid/events/:gid/edit controllers.Events.edit(uid, gid)
+POST    /users/:uid/events/:gid     controllers.Events.update(uid, gid)
+DELETE  /users/:uid/events/:eid     controllers.Events.deleteEvent(uid, eid)
 
 # Authentification
 #GET     /login                      controllers.Users.login

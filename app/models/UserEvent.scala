@@ -31,20 +31,27 @@ trait UserEventComponent {
       q.list()
     }
 
-    def listInscrits(events: List[Event])(implicit session: Session): List[UserEvent] = {
+    def listByEvents(events: List[Event])(implicit session: Session): List[UserEvent] = {
       events flatMap { event =>
         val q = for(u <- UserEvents if u.eventId === event.id) yield u
         q.list()
       }
     }
 
-    def listUsers(events: List[UserEvent])(implicit session: Session): List[User] = {
-      val temp = events flatMap { userEvent =>
-        AppDB.dal.Users.get(userEvent.userId).map{
-          user => user
+    def listUsers(userEvents: List[UserEvent])(implicit session: Session): List[User] = {
+      userEvents flatMap { userEvent =>
+        AppDB.dal.Users.get(userEvent.userId).map{ user =>
+          user
         }
       }
-      temp
+    }
+
+    def listEvents(userEvents: List[UserEvent])(implicit session: Session): List[Event] = {
+      userEvents flatMap { userEvent =>
+        AppDB.dal.Events.get(userEvent.eventId).map{ event =>
+          event
+        }
+      }
     }
 
     def save(userEvent: UserEvent)(implicit session: Session) = {

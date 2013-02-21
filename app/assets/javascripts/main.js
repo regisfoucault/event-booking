@@ -27,7 +27,27 @@ $(".unBookEvent").click(function(e) {
   if (window.confirm("Etes-vous sûr de vouloir vous désinscrire de cet événement ?")) {
     jsRoutes.controllers.Events.unBook(eid).ajax({
       success : function(data) {
-        window.location.reload()
+        window.location.reload();
+        console.log("success");
+      },
+      error: function(e) {
+        console.log(e);
+      }
+    });
+  }
+});
+
+$(".deleteEvent").click(function(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  var eid = $(e.target).attr("data-eid");
+  var uid = $(e.target).attr("data-uid");
+  console.log(eid);
+  console.log(uid);
+  if (window.confirm("Etes-vous sûr de vouloir supprimer cet événement ?")) {
+    jsRoutes.controllers.Events.deleteEvent(uid, eid).ajax({
+      success : function(data) {
+        window.location.reload();
         console.log("success");
       },
       error: function(e) {

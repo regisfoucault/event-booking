@@ -33,7 +33,7 @@ object Visits extends Controller with Secured {
       (for {
         creator <- AppDB.dal.Users.get(uid)
         events <- Some(AppDB.dal.Events.getByUser(uid))
-        inscrits <- Some(AppDB.dal.UserEvents.listInscrits(events))
+        inscrits <- Some(AppDB.dal.UserEvents.listByEvents(events))
       } yield {
         request.session.get("username") map { username =>
           val visitor = AppDB.dal.Users.getByUsername(username)

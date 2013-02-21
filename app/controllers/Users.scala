@@ -43,14 +43,29 @@ object Users extends Controller with Secured {
   def open(uid: String) = Action{ request =>
     (for {
       creator <- AppDB.dal.Users.get(uid)
-      events <- Some(AppDB.dal.Events.getByUser(uid)) // liste des events créés par cet admin
-      userevents <- Some(AppDB.dal.UserEvents.listInscrits(events)) // liste des userid/eventid des inscrits à ces events
-      inscrits <- Some(AppDB.dal.UserEvents.listUsers(userevents)) // récupération des user de ces couples userid/eventid
+      eventsListCreated <- Some(AppDB.dal.Events.getByUser(uid)) // liste des events créés par cet admin
+      usereventsListCreated <- Some(AppDB.dal.UserEvents.listByEvents(eventsListCreated)) // liste des userid/eventid des inscrits à ces events
+      inscritsListCreated <- Some(AppDB.dal.UserEvents.listUsers(usereventsListCreated)) // récupération des user de ces couples userid/eventid
     } yield {
       request.session.get("username") map { username =>
-        val visitor = AppDB.dal.Users.getByUsername(username)
-        Ok(views.html.openUser(creator, visitor, events, userevents, inscrits))
-      } getOrElse Ok(views.html.openUser(creator, None, events, userevents, inscrits))
+        (for {
+          visitor <- AppDB.dal.Users.getByUsername(username)
+          usereventsListBooked <- Some(AppDB.dal.UserEvents.getByUser(visitor.id))
+          eventsListBooked <- Some(AppDB.dal.UserEvents.listEvents(usereventsListBooked))
+          creatorsListBooked <- Some(AppDB.dal.Events.listUsers(eventsListBooked))
+        } yield {
+          Ok(views.html.openUser(
+            creator, 
+            Some(visitor), 
+            eventsListCreated, 
+            usereventsListCreated, 
+            inscritsListCreated, 
+            usereventsListBooked, 
+            eventsListBooked, 
+            creatorsListBooked
+          ))
+        }) getOrElse Ok(views.html.openUser(creator, None, eventsListCreated, usereventsListCreated, inscritsListCreated, List(), List(), List()))
+      } getOrElse Ok(views.html.openUser(creator, None, eventsListCreated, usereventsListCreated, inscritsListCreated, List(), List(), List()))
     }) getOrElse BadRequest
   }
 

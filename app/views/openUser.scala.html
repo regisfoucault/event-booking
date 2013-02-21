@@ -1,35 +1,8 @@
-@(creator: User, visitor: Option[User], events: List[Event], userevents: List[UserEvent], users: List[User])
+@(creator: User, visitor: Option[User], eventsListCreated: List[Event], usereventsListCreated: List[UserEvent], usersListCreated: List[User], userEventsListBooked: List[UserEvent], eventsListBooked: List[Event], creatorsListBooked: List[User])
 
 @import helper._
 
-@main("Booking") {
-  <div class="navbar navbar-fixed-top">
-    <div class="navbar-inner">
-      <div class="container">
-        <a class="btn btn-navbar collapsed" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </a>
-        <a class="brand" href="/">Booking</a>
-        <div class="nav-collapse navbar-responsive-collapse collapse" style="height: 0px;">
-          @visitor.map{ user2 =>
-            <ul class="nav pull-right">
-              <li id="fat-menu" class="dropdown">
-                      <a href="#" id="drop3" role="button" class="dropdown-toggle" data-toggle="dropdown">@user2.prename @user2.lastname<b class="caret"></b></a>
-                      <ul class="dropdown-menu" role="menu" aria-labelledby="drop3">
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="">Paramètres</a></li>
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="/logout">Logout</a></li>
-                      </ul>
-                    </li>
-            </ul>
-
-          }
-
-        </div>
-      </div>
-    </div>
-  </div>
+@main("Booking", visitor, true) {
 
   <div class="container">
     <div class="row">
@@ -39,7 +12,7 @@
             @if(visitor2.id==creator.id) {
               <h3>Vos événements créés<small><a href="/users/@creator.id/events/add">Ajouter</a></small></h3>
             } else {
-            <h3>Evénements de @creator.prename @creator.lastname</h3>
+              <h3>Evénements de @creator.prename @creator.lastname</h3>
             }
           }.getOrElse{
             <h3>Evénements</h3>
@@ -58,6 +31,7 @@
                 @{visitor.map{visitor =>
                   if(creator.id==visitor.id){
                   <th>Inscrits</th>
+                  <th></th>
                   } else {
                     <th>Status</th>
                   }
@@ -66,13 +40,13 @@
               </tr>
             </thead>
             <tbody>
-              @events.map{event =>
+              @eventsListCreated.map{event =>
                 <tr>
                   <td>@event.date</td>
                   <td>@event.name</td>
                   <td>@event.nbrePlaces</td>
                   <td>
-                    @{event.nbrePlaces.toInt - userevents.filter{ e => 
+                    @{event.nbrePlaces.toInt - usereventsListCreated.filter{ e => 
                       e.eventId == event.id
                     }.length}
                   </td>
@@ -80,24 +54,25 @@
                   @{visitor.map{visitor =>
                     if(creator.id==visitor.id){
                       <td>
-                        @{userevents.filter{ e =>
+                        {usereventsListCreated.filter{ e =>
                           e.eventId == event.id
                         }.map { userEvent =>
-                          users.filter { user =>
+                          usersListCreated.filter { user =>
                             userEvent.userId == user.id
                           }.map { user =>
                             user.prename ++ " " ++ user.lastname ++ " " ++ user.email ++ " " ++ user.phone
                           }
                         }}
                       </td>
-                      <td>Edit</td>
+                      <td><a href={"/users/" + creator.id + "/events/" + event.id + "/edit"} >Modifier</a></td>
+                      <td><a href="" class="deleteEvent" data-eid={event.id} data-uid={creator.id}>Delete</a></td>
                     } else {
-                      if(userevents.filter { e =>
+                      if(usereventsListCreated.filter { e =>
                         e.eventId == event.id && e.userId == visitor.id}.length > 0) {
                             <td><span class="label label-success">Inscrit</span></td>
-                            <td><button class="btn btn-small unBookEvent" name={event.id}>Se désinscrire</button></td>
+                            <td><a href="" class="unBookEvent" name={event.id}>Se désinscrire</a></td>
                           } else {
-                            <td><span class="label label-success">Non inscrit</span></td>
+                            <td><span class="label">Non inscrit</span></td>
                             <td><a href="" class="bookEvent" name={event.id}>Inscription</a></td>
                           }
                       }
@@ -110,7 +85,74 @@
             </tbody>
           </table>
         </div>
-      
+        
+
+        @visitor.map{visitor =>
+          <h3>Evénements auxquels vous êtes inscrit</h3>
+          <div class="row-fluid">
+            <div class="span12">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Organisateur</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @{eventsListBooked.map { event =>
+                    <tr>
+                      <td>{event.date}</td>
+                      <td>{event.name}</td>
+                      <td>{event.description}</td>
+                      <td>{
+                        creatorsListBooked.filter{ user =>
+                          event.creatorId == user.id
+                        }.map {user => 
+                          <a href={"/users/" + user.id}>{user.prename + " " + user.lastname}</a>}
+                      }</td>
+                      <td><a href="" class="unBookEvent" name={event.id}>Se désinscrire</a></td>
+                    </tr>
+                  }}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        }.getOrElse("")
+        @*<h3>Evénements auxquels vous êtes inscrit</h3>
+        <div class="row-fluid">
+          <div class="span12">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Organisateur</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                @{eventsListBooked.map { event =>
+                  <tr>
+                    <td>{event.date}</td>
+                    <td>{event.name}</td>
+                    <td>{event.description}</td>
+                    <td>{
+                      creatorsListBooked.filter{ user =>
+                        event.creatorId == user.id
+                      }.map {user => 
+                        <a href={"/users/" + user.id}>{user.prename + " " + user.lastname}</a>}
+                    }</td>
+                    <td><a href="" class="unBookEvent" name={event.id}>Se désinscrire</a></td>
+                  </tr>
+                }}
+              </tbody>
+            </table>
+          </div>
+        </div>*@
       </article>
     </div>
   </div>

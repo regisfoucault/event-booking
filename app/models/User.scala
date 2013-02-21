@@ -21,8 +21,8 @@ trait UserComponent {
 
   object Users extends Table[User]("users") {
     def id = column[String]("id", O.PrimaryKey)
-    def creationDate = column[java.sql.Timestamp]("creationDate")
-    def updateDate = column[java.sql.Timestamp]("updateDate")
+    def creationDate = column[java.sql.Timestamp]("creationdate")
+    def updateDate = column[java.sql.Timestamp]("updatedate")
     def status = column[String]("status")
     def prename = column[String]("prename")
     def lastname = column[String]("lastname")

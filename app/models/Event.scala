@@ -20,12 +20,12 @@ trait EventComponent {
 
   object Events extends Table[Event]("events") {
     def id = column[String]("id", O.PrimaryKey)
-    def creationDate = column[java.sql.Timestamp]("creationDate")
-    def updateDate = column[java.sql.Timestamp]("updateDate")
-    def creatorId = column[String]("creatorId")
+    def creationDate = column[java.sql.Timestamp]("creationdate")
+    def updateDate = column[java.sql.Timestamp]("updatedate")
+    def creatorId = column[String]("creatorid")
     def name = column[String]("name")
     def date = column[String]("date")
-    def nbrePlaces = column[String]("nbrePlaces")
+    def nbrePlaces = column[String]("nbreplaces")
     def description = column[String]("description")
     def * = id ~ creationDate ~ updateDate ~ creatorId ~ name ~ date ~ nbrePlaces ~ description <> (Event, Event.unapply _)
 

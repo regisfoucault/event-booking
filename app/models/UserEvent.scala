@@ -14,7 +14,7 @@ trait UserEventComponent {
 
   object UserEvents extends Table[UserEvent]("userevents") {
     def userId = column[String]("userid")
-    def eventId = column[String]("eventId")
+    def eventId = column[String]("eventid")
     def * = userId ~ eventId  <> (UserEvent, UserEvent.unapply _)
 
     def add(userEvent: UserEvent)(implicit session: Session) = {

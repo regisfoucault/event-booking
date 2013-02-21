@@ -10,7 +10,7 @@
         
           @visitor.map{ visitor2 =>
             @if(visitor2.id==creator.id) {
-              <h3>Vos événements créés<small><a href="/users/@creator.id/events/add">Ajouter</a></small></h3>
+              <h3>Vos événements créés<small><a href="/users/@creator.id/events/add"><i class="icon-plus"></i> Ajouter</a></small></h3>
             } else {
               <h3>Evénements de @creator.prename @creator.lastname</h3>
             }
@@ -64,8 +64,8 @@
                           }
                         }}
                       </td>
-                      <td><a href={"/users/" + creator.id + "/events/" + event.id + "/edit"} >Modifier</a></td>
-                      <td><a href="" class="deleteEvent" data-eid={event.id} data-uid={creator.id}>Delete</a></td>
+                      <td><a href={"/users/" + creator.id + "/events/" + event.id + "/edit"} ><i class="icon-pencil"></i> Modifier</a></td>
+                      <td><a href="" class="deleteEvent" data-eid={event.id} data-uid={creator.id}><i class="icon-trash"></i> Supprimer</a></td>
                     } else {
                       if(usereventsListCreated.filter { e =>
                         e.eventId == event.id && e.userId == visitor.id}.length > 0) {
